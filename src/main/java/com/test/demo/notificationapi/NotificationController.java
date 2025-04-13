@@ -6,24 +6,42 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/notifications")
 public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
 
     @PostMapping("/send")
-    public void sendNotification(@RequestBody NotificationDTO notification) {
-        notificationService.sendNotification(notification);
+    public String sendNotification(@RequestBody NotificationDTO dto) {
+        notificationService.sendNotification(dto);
+        return "Notification sent.";
     }
 
-    @GetMapping("/get/{userId}")
-    public List<NotificationDTO> getUserNotifications(@PathVariable String userId) {
-        return notificationService.getUserNotifications(userId);
+    @GetMapping("/{userId}/all")
+    public List<NotificationDTO> getAll(@PathVariable String userId) {
+        return notificationService.getAllNotifications(userId);
     }
 
-    @DeleteMapping("/clear/{userId}")
-    public void clearUserNotifications(@PathVariable String userId) {
+    @GetMapping("/{userId}/unread")
+    public List<NotificationDTO> getUnread(@PathVariable String userId) {
+        return notificationService.getUnreadNotifications(userId);
+    }
+
+    @GetMapping("/{userId}/read")
+    public List<NotificationDTO> getRead(@PathVariable String userId) {
+        return notificationService.getReadNotifications(userId);
+    }
+
+    @PostMapping("/{userId}/mark-all-read")
+    public String markAllAsRead(@PathVariable String userId) {
+        notificationService.markAllAsRead(userId);
+        return "All notifications marked as read.";
+    }
+
+    @DeleteMapping("/{userId}")
+    public String clearNotifications(@PathVariable String userId) {
         notificationService.clearNotifications(userId);
+        return "Notifications cleared.";
     }
 }
